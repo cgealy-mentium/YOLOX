@@ -100,16 +100,16 @@ def main():
     )
     logger.info("generated onnx model named {}".format(args.output_name))
 
-    if not args.no_onnxsim:
-        import onnx
-        from onnxsim import simplify
+    # if not args.no_onnxsim:
+    #     import onnx
+    #     #from onnxsim import simplify
 
-        # use onnx-simplifier to reduce reduent model.
-        onnx_model = onnx.load(args.output_name)
-        model_simp, check = simplify(onnx_model)
-        assert check, "Simplified ONNX model could not be validated"
-        onnx.save(model_simp, args.output_name)
-        logger.info("generated simplified onnx model named {}".format(args.output_name))
+    #     # use onnx-simplifier to reduce reduent model.
+    #     onnx_model = onnx.load(args.output_name)
+    #     #model_simp, check = simplify(onnx_model)
+    #     assert check, "Simplified ONNX model could not be validated"
+    #     onnx.save(model_simp, args.output_name)
+    #     logger.info("generated simplified onnx model named {}".format(args.output_name))
 
 
 if __name__ == "__main__":

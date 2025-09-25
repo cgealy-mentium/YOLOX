@@ -114,6 +114,10 @@ def _distributed_worker(
     ), "cuda is not available. Please check your installation."
     global_rank = machine_rank * num_gpus_per_machine + local_rank
     logger.info("Rank {} initialization finished.".format(global_rank))
+
+    assert num_gpus_per_machine <= torch.cuda.device_count()
+    torch.cuda.set_device(local_rank)
+
     try:
         dist.init_process_group(
             backend=backend,
@@ -121,6 +125,7 @@ def _distributed_worker(
             world_size=world_size,
             rank=global_rank,
             timeout=timeout,
+            device_id=torch.device(f'cuda:{local_rank}')
         )
     except Exception:
         logger.error("Process group URL: {}".format(dist_url))
@@ -140,8 +145,5 @@ def _distributed_worker(
     # synchronize is needed here to prevent a possible timeout after calling init_process_group
     # See: https://github.com/facebookresearch/maskrcnn-benchmark/issues/172
     comm.synchronize()
-
-    assert num_gpus_per_machine <= torch.cuda.device_count()
-    torch.cuda.set_device(local_rank)
 
     main_func(*args)
