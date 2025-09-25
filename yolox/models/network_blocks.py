@@ -331,7 +331,7 @@ class Focus(nn.Module):
 
     def __init__(self, in_channels, out_channels, ksize=1, stride=1, act="silu"):
         super().__init__()
-        self.conv_pre = BaseConv(in_channels, in_channels * 4, ksize=3, stride=2)
+        self.conv_pre = BaseConv(in_channels, in_channels * 4, ksize=3, stride=2, act=act)
         self.conv = BaseConv(in_channels * 4, out_channels, ksize, stride, act=act)
 
     def forward(self, x):
