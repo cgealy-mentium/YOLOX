@@ -25,16 +25,16 @@ class Exp(BaseExp):
         # factor of model width
         self.width = 1.00
         # activation name. For example, if using "relu", then "silu" will be replaced to "relu".
-        self.act = "silu"
+        self.act = "relu"
 
         # ---------------- dataloader config ---------------- #
         # set worker to 4 for shorter dataloader init time
         # If your training process cost many memory, reduce this value.
         self.data_num_workers = 4
-        self.input_size = (640, 640)  # (height, width)
+        self.input_size = (224, 224)  # (height, width)
         # Actual multiscale ranges: [640 - 5 * 32, 640 + 5 * 32].
         # To disable multiscale training, set the value to 0.
-        self.multiscale_range = 5
+        self.multiscale_range = 2
         # You can uncomment this line to specify a multiscale range
         # self.random_size = (14, 26)
         # dir of dataset images, if data_dir is None, this project will use `datasets` dir
@@ -101,7 +101,7 @@ class Exp(BaseExp):
 
         # -----------------  testing config ------------------ #
         # output image size during evaluation/test
-        self.test_size = (640, 640)
+        self.test_size = (224, 224)
         # confidence threshold during evaluation/test,
         # boxes whose scores are less than test_conf will be filtered
         self.test_conf = 0.01

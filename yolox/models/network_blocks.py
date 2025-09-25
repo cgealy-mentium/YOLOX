@@ -237,12 +237,16 @@ class SPPBottleneck(nn.Module):
 
         This module is equivalent to SPP(k=(5, 9, 13)).
         """
+        if activation == "relu":
+            act = nn.ReLU
+        else:
+            act = nn.SiLU
         super().__init__()
         c_ = c1 // 2  # hidden channels
         self.cv1 = Conv(c1, c_, 1, 1)
         self.cv2 = nn.ModuleList([Conv(c_, c2, 1, 1) for _ in range(4)])
         self.m =  nn.ModuleList([nn.Sequential(*[Conv(c_,c_,3,1,g = c_) for _ in range(k//2)]) for _ in range(3)])
-        recursive_act_conversion(self,act = nn.SiLU)
+        recursive_act_conversion(self,act = act)
 
     def forward(self, x):
         """Forward pass through Ghost Convolution block."""
