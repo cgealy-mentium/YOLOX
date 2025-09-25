@@ -6,8 +6,7 @@ import torch
 import torch.nn as nn
 
 from .darknet import Darknet
-from .network_blocks import BaseConv
-
+from .network_blocks import BaseConv, NearestUpsampleConv
 
 class YOLOFPN(nn.Module):
     """
@@ -24,16 +23,17 @@ class YOLOFPN(nn.Module):
         self.backbone = Darknet(depth)
         self.in_features = in_features
 
+        # MENTIUM: Replaced Upsample with NearestUpsampleConv
+
         # out 1
         self.out1_cbl = self._make_cbl(512, 256, 1)
+        self.upsample_1 = NearestUpsampleConv(256)
         self.out1 = self._make_embedding([256, 512], 512 + 256)
 
         # out 2
         self.out2_cbl = self._make_cbl(256, 128, 1)
+        self.upsample_2 = NearestUpsampleConv(128)
         self.out2 = self._make_embedding([128, 256], 256 + 128)
-
-        # upsample
-        self.upsample = nn.Upsample(scale_factor=2, mode="nearest")
 
     def _make_cbl(self, _in, _out, ks):
         return BaseConv(_in, _out, ks, stride=1, act="lrelu")
@@ -66,17 +66,17 @@ class YOLOFPN(nn.Module):
         """
         #  backbone
         out_features = self.backbone(inputs)
-        x2, x1, x0 = [out_features[f] for f in self.in_features]
+        x2, x1, x0 = out_features
 
         #  yolo branch 1
         x1_in = self.out1_cbl(x0)
-        x1_in = self.upsample(x1_in)
+        x1_in = self.upsample_1(x1_in)
         x1_in = torch.cat([x1_in, x1], 1)
         out_dark4 = self.out1(x1_in)
 
         #  yolo branch 2
         x2_in = self.out2_cbl(out_dark4)
-        x2_in = self.upsample(x2_in)
+        x2_in = self.upsample_2(x2_in)
         x2_in = torch.cat([x2_in, x2], 1)
         out_dark3 = self.out2(x2_in)
 

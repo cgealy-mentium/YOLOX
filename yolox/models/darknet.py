@@ -82,16 +82,19 @@ class Darknet(nn.Module):
     def forward(self, x):
         outputs = {}
         x = self.stem(x)
-        outputs["stem"] = x
+        # outputs["stem"] = x
         x = self.dark2(x)
-        outputs["dark2"] = x
+        # outputs["dark2"] = x
         x = self.dark3(x)
-        outputs["dark3"] = x
+        # outputs["dark3"] = x
+        y3 = x
         x = self.dark4(x)
-        outputs["dark4"] = x
+        # outputs["dark4"] = x
+        y4 = x
         x = self.dark5(x)
-        outputs["dark5"] = x
-        return {k: v for k, v in outputs.items() if k in self.out_features}
+        # outputs["dark5"] = x
+        y5 = x
+        return y3, y4, y5
 
 
 class CSPDarknet(nn.Module):
@@ -167,13 +170,16 @@ class CSPDarknet(nn.Module):
     def forward(self, x):
         outputs = {}
         x = self.stem(x)
-        outputs["stem"] = x
+        # outputs["stem"] = x
         x = self.dark2(x)
-        outputs["dark2"] = x
+        # outputs["dark2"] = x
         x = self.dark3(x)
-        outputs["dark3"] = x
+        # outputs["dark3"] = x
+        y3 = x
         x = self.dark4(x)
-        outputs["dark4"] = x
+        # outputs["dark4"] = x
+        y4 = x
         x = self.dark5(x)
-        outputs["dark5"] = x
-        return {k: v for k, v in outputs.items() if k in self.out_features}
+        # outputs["dark5"] = x
+        y5 = x
+        return y3, y4, y5
